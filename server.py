@@ -20,6 +20,7 @@ from pydantic import Field
 BUCKET_NAME = os.environ.get("OTOKUNA_BUCKET", "otokuna-data-prod-1760689817")
 SFN_REGION = os.environ.get("OTOKUNA_SFN_REGION", "ap-northeast-1")
 SFN_ARN = os.environ.get("OTOKUNA_SFN_ARN", "")
+S3_REGION = os.environ.get("OTOKUNA_S3_REGION", "ap-northeast-1")
 
 # S3 key patterns (not secrets, safe to hardcode defaults)
 SCRAPED_KEY_PREFIX = "dumped_data/daily"
@@ -65,7 +66,7 @@ mcp = FastMCP(
 
 
 def _s3_bucket():
-    return boto3.resource("s3").Bucket(BUCKET_NAME)
+    return boto3.resource("s3", region_name=S3_REGION).Bucket(BUCKET_NAME)
 
 
 def _sfn_client():
