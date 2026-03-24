@@ -10,7 +10,6 @@ from typing import Annotated
 import boto3
 import pandas as pd
 from fastmcp import FastMCP
-from fastmcp.server.auth import AccessToken, TokenVerifier
 from pydantic import Field
 
 
@@ -48,27 +47,6 @@ DEFAULT_COLUMNS = [
 ]
 
 
-# ---------------------------------------------------------------------------
-# Auth
-# ---------------------------------------------------------------------------
-
-
-class ApiKeyAuth(TokenVerifier):
-    """Simple bearer token auth that checks against a fixed API key."""
-
-    def __init__(self, token: str):
-        super().__init__()
-        self._token = token
-
-    async def verify_token(self, token: str) -> AccessToken | None:
-        if token == self._token:
-            return AccessToken(token=token, client_id="mcp-client", scopes=[])
-        return None
-
-
-auth_token = os.environ.get("MCP_AUTH_TOKEN")
-auth = ApiKeyAuth(token=auth_token) if auth_token else None
-
 mcp = FastMCP(
     "Otokuna",
     instructions=(
@@ -78,7 +56,6 @@ mcp = FastMCP(
         "Use the tools to list available data, trigger new searches from Suumo URLs, "
         "and retrieve property listings as CSV for analysis."
     ),
-    auth=auth,
 )
 
 
